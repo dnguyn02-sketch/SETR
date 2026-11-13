@@ -1,11 +1,11 @@
 # model settings
-norm_cfg = dict(type='SyncBN', requires_grad=True)
+norm_cfg = dict(type='BN', requires_grad=True)
 model = dict(
     type='EncoderDecoder',
     backbone=dict(
         type='VisionTransformer',
         model_name='vit_large_patch16_384',
-        img_size=768,
+        img_size=512,
         patch_size=16,
         in_chans=3,
         embed_dim=1024,
@@ -22,7 +22,7 @@ model = dict(
         in_channels=1024,
         channels=512,
         in_index=23,
-        img_size=768,
+        img_size=512,
         embed_dim=1024,
         num_classes=19,
         norm_cfg=norm_cfg,

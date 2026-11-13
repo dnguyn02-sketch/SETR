@@ -13,7 +13,7 @@ from mmseg.utils import get_root_logger
 from mmcv.runner import load_checkpoint
 
 import torch.utils.checkpoint as checkpoint
-from ..backbones.region_attention import LayerNorm2d
+# # from ..backbones.region_attention import LayerNorm2d
 import math
 
 from mmseg.models.backbones.hlg_share import AttentionShareGlobal, AttentionShareLocal, DWMlp, InnerPatchEmbed

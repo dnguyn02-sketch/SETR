@@ -19,7 +19,7 @@ from .uper_head import UPerHead
 from .vit_up_head import VisionTransformerUpHead
 from .vit_mla_head import VIT_MLAHead
 from .vit_mla_auxi_head import VIT_MLA_AUXIHead
-from .hlg_up_head import HLGUPHead
+# from .hlg_up_head import HLGUPHead
 
 
 __all__ = [
@@ -27,5 +27,4 @@ __all__ = [
     'UPerHead', 'DepthwiseSeparableASPPHead', 'ANNHead', 'DAHead', 'OCRHead',
     'EncHead', 'DepthwiseSeparableFCNHead', 'FPNHead', 'EMAHead', 'DNLHead',
     'PointHead', 'VisionTransformerUpHead', 'VIT_MLAHead', 'VIT_MLA_AUXIHead', 
-    'HLGUPHead'
 ]
