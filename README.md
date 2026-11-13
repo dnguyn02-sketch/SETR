@@ -58,6 +58,7 @@ sudo apt install zip
 - Create dataset directory
 ```bash
 mkdir -p data/cityscapes
+```
 - Unzip files and generate training labels
 ```bash
 unzip "/mnt/c/Users/Darren/Downloads/gtFine_trainvaltest.zip" -d data/cityscapes
