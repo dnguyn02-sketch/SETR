@@ -1,3 +1,84 @@
+# SETR Reproduction for 1 GPU
+
+## Original Repository
+https://github.com/LogosIntelligenceLab/SETR
+
+## What the Authors Changed
+- SETR Models (2021): A transformer based segmentation approach with three decoders (Naive, PUP, and MLA) and ViT/DeiT backbones with configurations for Cityscapes, ADE20K, and Pascal Context.
+- HLG Addition (2024): a new backbone for classification, segmentation and detection. The repo is missing some HLG files, so the HLG head can't run.
+- Gave pretrained model links and setup script.
+
+## What we (Darren, Nirali, Riya) Changed
+- Disabled the missing HLG imports so SETR baselines can run
+  - commented out 'HLGUPHead' import in `mmseg/models/decode_heads/__init__.py`
+  - commented out 'region_attention' import in `mmseg/models/decode_heads/hlg_utils.py`
+- Edited base configs for our setup: 
+  - changed crop size to (512,512) in `configs/_base_/datasets/cityscapes_768x768.py`
+  - changed type to BN (instead of syncBN) in `configs/_base_/models/setr_mla.py` 
+  - changed type to BN and img_size from 768 to 512 `configs/_base_/models/setr_naive_pup.py`
+- Single GPU Configurations in `configs/SETR/`: `SETR_Naive_Base_BN_1gpu.py`, `SETR_PUP_DeiT_BN_1gpu.py` and `SETR_MLA_DeiT_BN_1gpu.py`. 
+  - Settings: 512 crop, BN, batch size 1, 4000 iterations on a single GPU
+
+## How to replace baseline
+### 1. Produce Environment
+- Python (version 3.7), PyTorch (version 1.6.0), CUDA (version 10.1), mmcv-full(version 1.2.2)
+```bash
+conda create -n open-mmlab python=3.7 -y
+conda activate open-mmlab
+```
+# Install PyTorch and mmcv-full
+```bash
+conda install pytorch=1.6.0 torchvision cudatoolkit=10.1 -c pytorch -y
+pip install mmcv-full==1.2.2 -f https://download.openmmlab.com/mmcv/dist/cu101/torch1.6.0/index.html
+```
+# Clone the SETR repository
+```bash
+git clone https://github.com/dnguyn02-sketch/SETR.git
+cd SETR
+```
+# Switch to the reproduction branch
+```bash
+git checkout reproduction
+```
+# Install SETR and its requirements
+```bash
+pip install -e .
+pip install -r requirements/optional.txt
+pip install timm==0.4.12
+pip install cityscapesscripts
+pip install yapf==0.40.1
+sudo apt install libgomp1
+sudo apt install zip
+```
+
+### 2. Obtain Cityscapes Data
+- Obtain the cityscapes data from https://www.cityscapes-dataset.com/downloads/
+  - gtFine_trainvaltest.zip (241 MB)
+  - leftImg8bit_trainvaltest.zip (11 GB)
+- Create dataset directory
+```bash
+mkdir -p data/cityscapes
+- Unzip files and generate training labels
+```bash
+unzip "/mnt/c/Users/Darren/Downloads/gtFine_trainvaltest.zip" -d data/cityscapes
+unzip "/mnt/c/Users/Darren/Downloads/leftImg8bit_trainvaltest.zip" -d data/cityscapes
+python tools/convert_datasets/cityscapes.py data/cityscapes --nproc 8
+```
+### 3. Training
+- Baselines are at simpler settings (512 crop size, BN, Batch Size = 1, 4000 iterations)
+```bash
+nohup python tools/train.py configs/SETR/SETR_Naive_Base_BN_1gpu.py --gpus 1 > train_4k.log 2>&1 &
+nohup python tools/train.py configs/SETR/SETR_PUP_DeiT_BN_1gpu.py --gpus 1 > train_pup.log 2>&1 &
+nohup python tools/train.py configs/SETR/SETR_MLA_DeiT_BN_1gpu.py --gpus 1 > train_mla.log 2>&1 &
+```
+### 4. Evaluation and Results
+```bash
+./tools/dist_test.sh configs/SETR/SETR_PUP_DeiT_BN_1gpu.py \
+  work_dirs/SETR_PUP_DeiT_BN_1gpu/iter_4000.pth 1 --eval mIoU
+```
+- Check .log files and it should also show evaluation mIoU
+
+
 # SEgmentation TRansformers -- SETR
 
 [Project page](https://logosintelligencelab.github.io/SETR/)
